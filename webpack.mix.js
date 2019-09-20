@@ -12,4 +12,19 @@ const mix = require('laravel-mix');
  */
 
 mix.js('resources/js/app.js', 'public/js')
-    .sass('resources/sass/app.scss', 'public/css');
+    .disableSuccessNotifications()
+    .stylus('resources/stylus/app.styl', 'public/css')
+    .browserSync({
+        snippetOptions: {
+            rule: {
+                match: /<\/body>/i,
+                fn: function (snippet, match) {
+                    return snippet + match;
+                }
+            }
+        },
+        proxy: {
+            target: 'http://localhost',
+            ws: true
+        },
+    });

@@ -1,0 +1,58 @@
+version: "3"
+
+networks:
+  clixode:
+
+#volumes:
+#  socket:
+#    driver: local
+
+services:
+  php:
+    build:
+      context: ./docker
+      dockerfile: php.docker
+
+    networks:
+      - clixode
+
+    volumes:
+      - .:/var/www
+      - ./docker/var/mysql:/var/run/mysqld:rw
+
+  nginx:
+    build:
+      context: ./docker
+      dockerfile: nginx.docker
+
+    networks:
+      - clixode
+
+    volumes:
+      - .:/var/www
+#      - socket:/socket
+
+    ports:
+      - 80:80
+
+  mysql:
+    build:
+      context: ./docker
+      dockerfile: mysql.docker
+
+    networks:
+      - clixode
+
+    volumes:
+      - ./storage/mysql:/var/lib/mysql
+      - ./docker/var/mysql:/var/run/mysqld:rw
+
+    ports:
+      - 3306:3306
+
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+#      MYSQL_UNIX_PORT: /var/run/mysql.sock
+      MYSQL_DATABASE: clixode
+      MYSQL_ROOT_PASSWORD: rootpassword

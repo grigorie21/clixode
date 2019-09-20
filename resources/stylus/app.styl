@@ -1,0 +1,114 @@
+@import "var.styl"
+
+html, body
+    font-family: 'Roboto Condensed', sans-serif;
+    box-sizing border-box;
+    margin 0;
+    padding 0;
+    display flex
+
+body
+    height 100vh
+    width 100vw
+
+aside
+    height: 100%
+    width: 300px
+    background color1
+
+main
+    height 100%
+    width 100%
+    background color5
+
+.logo
+    color #fff
+    font-size 32px;
+    padding: 20px;
+    text-align center
+
+.side-menu
+    list-style none
+
+    li
+        margin: 0 0 15px 0
+
+        a
+            color color3
+            font-size 18px
+
+.header
+    display flex
+    background color6
+    padding 20px
+
+.content
+    padding 20px
+
+.button
+    height height1
+    background color4
+    display block
+    flex-shrink 1
+    color color6
+    padding 0 20px
+    line-height @height
+    font-size: 18px
+    text-decoration none
+
+input[type=search]
+    height height1
+    background color5
+    flex-grow 1
+    border 0
+    margin-left 20px
+    font-size: 18px
+    padding 0 15px
+
+table
+    width 100%
+    border-collapse collapse
+
+    tr:hover td
+        background color3
+
+    th, td
+        background color6
+        padding 10px
+        border 1px solid color5
+
+        &.id
+            width 50px
+
+        &.title
+            text-align left
+
+        &.actions
+            width 50px
+            text-align center
+
+    td.actions
+        display flex
+        justify-content center
+
+.text-left
+    text-align left
+
+.text-right
+    text-align right
+
+.text-center
+    text-align center
+
+.datetime
+    width 160px
+
+.icon
+    width: 20px
+    height: 20px
+    display block
+    text-decoration none
+    background center center no-repeat
+
+    &.edit
+        background-image url('/img/icon/edit.svg')
