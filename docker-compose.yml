@@ -9,6 +9,8 @@ volumes:
 
 services:
   php:
+    container_name: clixode_php
+
     build:
       context: ./docker
       dockerfile: php.docker
@@ -19,6 +21,8 @@ services:
       - var_run:/var/run
 
   nginx:
+    container_name: clixode_nginx
+
     build:
       context: ./docker
       dockerfile: nginx.docker
@@ -36,6 +40,8 @@ services:
       - 443:443
 
   mysql:
+    container_name: clixode_mysql
+
     build:
       context: ./docker
       dockerfile: mysql.docker
@@ -50,7 +56,7 @@ services:
     ports:
       - 3306:3306
 
-    restart: always
+#    restart: always
 
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
@@ -58,3 +64,16 @@ services:
 
     command:
       'mysqld --innodb-flush-method=fsync'
+
+  redis:
+    container_name: clixode_redis
+
+    build:
+      context: ./docker
+      dockerfile: redis.docker
+
+    volumes:
+      - var_run:/var/run
+
+    ports:
+      - 6379:6379
