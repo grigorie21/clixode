@@ -16,3 +16,8 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::group(['as' => 'file.'], function() {
+    Route::any('add', 'FileController@index')->name('add');
+    Route::any('status', 'FileController@status')->name('status');
+});
