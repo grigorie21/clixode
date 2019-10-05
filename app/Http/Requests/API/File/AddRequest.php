@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\API;
+namespace App\Http\Requests\API\File;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class FileAddRequest extends FormRequest
+class AddRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,8 @@ class FileAddRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'bucket' => 'required', //bucket name to add file
+            'url' => 'required|url', //regex:/^https?\:\/\//
         ];
     }
 }

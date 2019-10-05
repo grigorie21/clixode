@@ -18,6 +18,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::group(['as' => 'file.', 'prefix' => 'file'], function() {
-    Route::any('add', 'FileController@add')->name('add');
+    Route::group(['as' => 'add.', 'prefix' => 'add'], function() {
+        Route::post('url', 'File\AddController@url')->name('url');
+//        Route::any('delete', 'File/AddController@delete')->name('delete');
+//        Route::any('update', 'File/AddController@update')->name('update');
+    });
+
     Route::any('status', 'FileController@status')->name('status');
 });
