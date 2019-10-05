@@ -17,7 +17,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::group(['as' => 'file.'], function() {
-    Route::any('add', 'FileController@index')->name('add');
+Route::group(['as' => 'file.', 'prefix' => 'file'], function() {
+    Route::any('add', 'FileController@add')->name('add');
     Route::any('status', 'FileController@status')->name('status');
 });
