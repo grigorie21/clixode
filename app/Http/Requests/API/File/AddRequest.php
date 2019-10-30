@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\API\File;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\JsonRequest;
 
-class AddRequest extends FormRequest
+class AddRequest extends JsonRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,8 @@ class AddRequest extends FormRequest
     public function rules()
     {
         return [
-            'bucket' => 'required', //bucket name to add file
-            'url' => 'required|url', //regex:/^https?\:\/\//
+            'bucket' => 'required|string',
+            'url' => 'required|url',
         ];
     }
 }

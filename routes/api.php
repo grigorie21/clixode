@@ -24,5 +24,5 @@ Route::group(['as' => 'file.', 'prefix' => 'file'], function() {
 //        Route::any('update', 'File/AddController@update')->name('update');
     });
 
-    Route::any('status', 'FileController@status')->name('status');
+//    Route::any('status', 'FileController@status')->name('status');
 });

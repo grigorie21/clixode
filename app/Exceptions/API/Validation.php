@@ -19,8 +19,10 @@ class Validation extends ErrorResponse
 
     protected $httpCode;
 
-    public function __construct(int $code, array $fields = [], int $httpCode = 400)
+    public function __construct(int $code, array $fields = [])
     {
+        $httpCode = 400;
+
         switch ($code) {
             case 200:
                 $message = 'Request validation error';
@@ -32,15 +34,10 @@ class Validation extends ErrorResponse
                 $message = 'Unknown system error';
         }
 
-        parent::__construct($message, $code, null);
+//        parent::__construct($message, $code, null);
 
         $this->code = $code;
         $this->message = $message;
         $this->httpCode = $httpCode;
-    }
-
-    public function getHttpCode()
-    {
-        return $this->httpCode;
     }
 }

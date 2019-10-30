@@ -4,10 +4,11 @@
 namespace App\Response;
 
 
-use App\Traits\ResponseTrait;
-use Exception;
+//use Exception;
 
-class ErrorResponse extends Exception
+use App\Traits\ResponseTrait;
+
+class SuccessResponse
 {
     use ResponseTrait;
 }
