@@ -11,13 +11,8 @@ class BucketFile extends Model
     protected $table = 'bucket_file';
     protected $fillable = ['title'];
 
-    public function getCreatedAtAttribute($value)
-    {
-        return Carbon::parse($value)->format('d.m.Y H:i:s');
-    }
-
-    public function getUpdatedAtAttribute($value)
-    {
-        return Carbon::parse($value)->format('d.m.Y H:i:s');
-    }
+    protected $casts = [
+        'created_at' => 'd.m.Y H:i:s',
+        'updated_at' => 'd.m.Y H:i:s',
+    ];
 }

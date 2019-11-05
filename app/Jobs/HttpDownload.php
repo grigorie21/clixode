@@ -49,8 +49,6 @@ class HttpDownload implements ShouldQueue
             $progress = 0;
         } else {
             $progress = round($downloaded_size / $download_size * 100, 2);
-            echo "{$progress}\n";
-//        echo "{$download_size}/{$downloaded_size}\n";
 
             if ((time() - $this->time) >= 1) {
                 $this->time = time();
@@ -91,10 +89,8 @@ class HttpDownload implements ShouldQueue
      *
      * @return void
      */
-    public
-    function handle()
+    public function handle()
     {
-        file_put_contents('progress.txt', '');
         $targetFile = fopen('testfile.iso', 'w');
         $ch = curl_init('http://ftp.free.org/mirrors/releases.ubuntu-fr.org/11.04/ubuntu-11.04-desktop-i386-fr.iso');
 

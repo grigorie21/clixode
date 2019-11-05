@@ -19,8 +19,6 @@ class HttpDownloadTaskTable extends Migration
             $table->integer('status_id');
             $table->float('progress');
             $table->timestamps();
-
-//            $table->foreign('status_id')->references('id')->on('ref_http_download_task');
         });
     }
 

@@ -22,7 +22,7 @@ Route::group(['prefix' => 'file', 'as' => 'file.', 'middleware' => 'auth.user'],
     Route::get('/', 'FileController@index')->name('index');
 });
 
-// Api
+// API
 Route::group(['prefix' => 'api', 'as' => 'api.', 'middleware' => 'auth.user'], function () {
     Route::group(['prefix' => 'file', 'as' => 'file.'], function () {
         Route::get('download', 'API\File\AddController@index')->name('download');
