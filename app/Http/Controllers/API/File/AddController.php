@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\File;
 
 use App\Http\Requests\API\File\AddRequest;
+use App\Jobs\HttpDownload;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -20,6 +21,14 @@ class AddController extends Controller
         dd($request->all());
         // Add download file task
     }
+
+    /**
+     *
+     */
+    public function index(){
+        HttpDownload::dispatch();
+    }
+
 
     /**
      * Return status of current file/task

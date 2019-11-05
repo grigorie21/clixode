@@ -18,5 +18,13 @@ Route::group(['prefix' => 'image', 'as' => 'image.', 'middleware' => 'auth.user'
 
 // File
 Route::group(['prefix' => 'file', 'as' => 'file.', 'middleware' => 'auth.user'], function () {
+    Route::get('download', 'FileController@download')->name('download');
     Route::get('/', 'FileController@index')->name('index');
+});
+
+// Api
+Route::group(['prefix' => 'api', 'as' => 'api.', 'middleware' => 'auth.user'], function () {
+    Route::group(['prefix' => 'file', 'as' => 'file.'], function () {
+        Route::get('download', 'API\File\AddController@index')->name('download');
+    });
 });

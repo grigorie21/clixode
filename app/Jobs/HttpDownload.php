@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\HttpDownloadTask;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -15,6 +16,11 @@ class HttpDownload implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    public $time;
+    public $firstRecord;
+    public $id;
+
+
     /**
      * Create a new job instance.
      *
@@ -23,6 +29,7 @@ class HttpDownload implements ShouldQueue
     public function __construct()
     {
         //
+        $this->time = time();
     }
 
     /**
@@ -44,6 +51,31 @@ class HttpDownload implements ShouldQueue
             $progress = round($downloaded_size / $download_size * 100, 2);
             echo "{$progress}\n";
 //        echo "{$download_size}/{$downloaded_size}\n";
+
+            if ((time() - $this->time) >= 1) {
+                $this->time = time();
+                if (!$this->firstRecord) {
+                    $task = HttpDownloadTask::create([
+                        'url' => 'test_url',
+                        'status_id' => '1',
+                        'progress' => $progress,
+                    ]);
+                    $this->firstRecord = true;
+                    $this->id = $task->id;
+                } else {
+                    if ($this->id) {
+                        HttpDownloadTask::find($this->id)->update([
+                            'progress' => $progress,
+                        ]);
+                    }
+                }
+            }
+
+            if ($progress == 100) {
+                HttpDownloadTask::find($this->id)->update([
+                    'progress' => $progress,
+                ]);
+            }
         }
 
         if ($progress > $previousProgress) {
@@ -59,7 +91,8 @@ class HttpDownload implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public
+    function handle()
     {
         file_put_contents('progress.txt', '');
         $targetFile = fopen('testfile.iso', 'w');
