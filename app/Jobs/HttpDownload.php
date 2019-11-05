@@ -28,7 +28,6 @@ class HttpDownload implements ShouldQueue
      */
     public function __construct()
     {
-        //
         $this->time = time();
     }
 
