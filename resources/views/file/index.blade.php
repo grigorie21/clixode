@@ -1,7 +1,7 @@
 @extends('index')
 
 @section('body')
-    <a href="{{route('image.create')}}" class="button">Create</a>
+    <a href="{{route('file.create')}}" class="button">Create</a>
     <table>
         <thead>
         <tr>
@@ -20,7 +20,7 @@
                 <td class="text-center">{{$v->created_at}}</td>
                 <td class="text-center">{{$v->updated_at}}</td>
                 <td class="actions">
-                    <a href="{{route('image.edit', ['model' => $v->id])}}">
+                    <a href="{{route('file.edit', ['model' => $v->id])}}">
                         <i class="icon edit"></i>
                     </a>
                 </td>

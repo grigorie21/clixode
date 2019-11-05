@@ -2,6 +2,9 @@ FROM redis:5-alpine
 
 COPY config/redis.conf /home/redis/redis.conf
 
-RUN mkdir -p /var/run/redis && chown redis:redis /var/run/redis
+#WORKDIR /var/run/redis
+
+RUN ["mkdir", "/var/run/redis"]
+# && chown redis:redis /var/run/redis]
 
 CMD ["redis-server", "/home/redis/redis.conf"]

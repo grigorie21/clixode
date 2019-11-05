@@ -23,7 +23,6 @@
 </aside>
 <main>
     <div class="header">
-        <a href="{{route('image.create')}}" class="button">Create</a>
         <input type="search" name="q"/>
     </div>
 
