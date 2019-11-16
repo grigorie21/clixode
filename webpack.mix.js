@@ -24,7 +24,7 @@ mix.js('resources/js/app.js', 'public/js')
             }
         },
         proxy: {
-            target: 'http://localhost',
+            target: 'http://clixode.local',
             ws: true
         },
     });

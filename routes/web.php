@@ -19,4 +19,6 @@ Route::group(['prefix' => 'image', 'as' => 'image.', 'middleware' => 'auth.user'
 // File
 Route::group(['prefix' => 'file', 'as' => 'file.', 'middleware' => 'auth.user'], function () {
     Route::get('/', 'FileController@index')->name('index');
+    Route::get('create', 'FileController@create')->name('create');
+    Route::get('edit/{model}', 'FileController@edit')->name('edit');
 });
