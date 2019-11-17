@@ -11,8 +11,17 @@ class BucketFile extends Model
     protected $table = 'bucket_file';
     protected $fillable = ['title'];
 
-    protected $casts = [
-        'created_at' => 'd.m.Y H:i:s',
-        'updated_at' => 'd.m.Y H:i:s',
-    ];
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('d.m.Y H:i:s');
+    }
+
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('d.m.Y H:i:s');
+    }
+
+    public function files() {
+        return $this->belongsToMany(File::class, 'file_m2m_bucket', 'bucket_id', 'file_id', 'id', 'id');
+    }
 }

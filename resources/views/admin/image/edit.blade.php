@@ -1,4 +1,4 @@
-@extends('index')
+@extends('admin.index')
 
 @section('body')
     @if($model->id)

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\API\File;
+namespace App\Http\Requests\API\File\Add;
 
 use App\Http\Requests\JsonRequest;
 
-class AddRequest extends JsonRequest
+class UrlRequest extends JsonRequest
 {
     /**
      * Determine if the user is authorized to make this request.

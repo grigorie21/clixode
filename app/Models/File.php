@@ -9,10 +9,19 @@ class File extends Model
 {
     public $timestamps = true;
     protected $table = 'file';
-    protected $fillable = [];
+    protected $fillable = ['source_name', 'sha256', 'size', 'slug'];
 
-    protected $casts = [
-        'created_at' => 'd.m.Y H:i:s',
-        'updated_at' => 'd.m.Y H:i:s',
-    ];
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('d.m.Y H:i:s');
+    }
+
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('d.m.Y H:i:s');
+    }
+
+    public function bucket() {
+        return $this->belongsToMany(BucketFile::class, 'file_m2m_bucket', 'file_id', 'bucket_id', 'id', 'id');
+    }
 }

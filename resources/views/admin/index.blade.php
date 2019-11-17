@@ -11,10 +11,10 @@
 
     <ul class="side-menu">
         <li>
-            <a href="{{route('image.index')}}">Image buckets</a>
+            <a href="{{route('admin.image.index')}}">Image buckets</a>
         </li>
         <li>
-            <a href="{{route('file.index')}}">File buckets</a>
+            <a href="{{route('admin.file.index')}}">File buckets</a>
         </li>
         <li>
             <a href="#">User</a>
@@ -23,7 +23,7 @@
 </aside>
 <main>
     <div class="header">
-        <a href="{{route('image.create')}}" class="button">Create</a>
+        <a href="{{route('admin.image.create')}}" class="button">Create</a>
         <input type="search" name="q"/>
     </div>
 

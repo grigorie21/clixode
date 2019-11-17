@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\File;
 
 use App\Http\Requests\API\File\AddRequest;
 use App\Jobs\HttpDownload;
+use App\Http\Requests\API\File\Add\UrlRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -11,12 +12,12 @@ use App\Http\Controllers\Controller;
 class AddController extends Controller
 {
     /**
-     * Add file to bucket
+     * Add file to bucket by url
      *
      * @param Request $request
      * @return JsonResponse
      */
-    public function url(AddRequest $request)
+    public function url(UrlRequest $request)
     {
         HttpDownload::dispatch($request->url, $request->bucket);
     }
