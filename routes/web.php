@@ -29,3 +29,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
         Route::post('upload', 'FileController@upload')->name('upload');
     });
 });
+
+// Api
+Route::group(['prefix' => 'api', 'as' => 'api.', 'namespace' => 'API'], function () {
+    Route::group(['prefix' => 'file', 'as' => 'file.', 'namespace' => 'File'], function () {
+        Route::post('download', 'AddController@url')->name('download');
+    });
+});

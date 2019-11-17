@@ -24,7 +24,7 @@ class UrlRequest extends JsonRequest
     public function rules()
     {
         return [
-            'bucket' => 'required|string',
+            'bucket' => 'required|string',//todo добавить проверку exists
             'url' => 'required|url',
         ];
     }

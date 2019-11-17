@@ -2,7 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Models\BucketFile;
 use App\Models\File;
+use App\Models\FileM2mBucket;
 use App\Models\HttpDownloadTask;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -85,9 +87,18 @@ class HttpDownload implements ShouldQueue
                     'progress' => $progress,
                 ]);
 
-                File::create();
-
-
+                $file = File::create([
+                    'source_name' => 1,
+                    'sha256' => uniqid(),
+                    'size' => $download_size,
+                    'slug' => uniqid(),
+                ]);
+                $bucketId = BucketFile::where('slug', $this->bucket)->first()->id;
+                FileM2mBucket::create([
+                    'file_id' => $file->id,
+                    'bucket_id' => $bucketId,
+                    'name' => 11
+                ]);
             }
         }
     }
