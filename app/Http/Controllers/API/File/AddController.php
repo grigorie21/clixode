@@ -18,17 +18,8 @@ class AddController extends Controller
      */
     public function url(AddRequest $request)
     {
-        dd($request->all());
-        // Add download file task
+        HttpDownload::dispatch($request->url, $request->bucket);
     }
-
-    /**
-     *
-     */
-    public function index(){
-        HttpDownload::dispatch();
-    }
-
 
     /**
      * Return status of current file/task

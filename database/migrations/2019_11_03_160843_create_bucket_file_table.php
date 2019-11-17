@@ -16,7 +16,6 @@ class CreateBucketFileTable extends Migration
         Schema::create('bucket_file', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->char('title', 255);
-            $table->char('slug', 255);
             $table->integer('user_id');
             $table->timestamps();
         });

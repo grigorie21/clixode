@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\File;
 use App\Models\HttpDownloadTask;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -19,16 +20,19 @@ class HttpDownload implements ShouldQueue
     public $time;
     public $firstRecord;
     public $id;
-
+    public $url;
+    public $bucket;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($url, $bucket)
     {
         $this->time = time();
+        $this->url = $url;
+        $this->bucket = $bucket;
     }
 
     /**
@@ -47,13 +51,14 @@ class HttpDownload implements ShouldQueue
         if ($download_size == 0) {
             $progress = 0;
         } else {
-            $progress = round($downloaded_size / $download_size * 100, 2);
+            $progress = round($downloaded_size / $download_size * 100, 2, PHP_ROUND_HALF_DOWN);
 
             if ((time() - $this->time) >= 1) {
                 $this->time = time();
+
                 if (!$this->firstRecord) {
                     $task = HttpDownloadTask::create([
-                        'url' => 'test_url',
+                        'url' => $this->url,
                         'status_id' => '1',
                         'progress' => $progress,
                     ]);
@@ -67,12 +72,6 @@ class HttpDownload implements ShouldQueue
                     }
                 }
             }
-
-            if ($progress == 100) {
-                HttpDownloadTask::find($this->id)->update([
-                    'progress' => $progress,
-                ]);
-            }
         }
 
         if ($progress > $previousProgress) {
@@ -80,6 +79,16 @@ class HttpDownload implements ShouldQueue
             $fp = fopen('progress.txt', 'a');
             fputs($fp, "$progress\n");
             fclose($fp);
+
+            if ($progress == 100) {
+                HttpDownloadTask::find($this->id)->update([
+                    'progress' => $progress,
+                ]);
+
+                File::create();
+
+
+            }
         }
     }
 
@@ -91,7 +100,7 @@ class HttpDownload implements ShouldQueue
     public function handle()
     {
         $targetFile = fopen('testfile.iso', 'w');
-        $ch = curl_init('http://ftp.free.org/mirrors/releases.ubuntu-fr.org/11.04/ubuntu-11.04-desktop-i386-fr.iso');
+        $ch = curl_init($this->url);
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_NOPROGRESS, false);
