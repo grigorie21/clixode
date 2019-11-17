@@ -5,11 +5,11 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class BucketFile extends Model
+class File extends Model
 {
     public $timestamps = true;
-    protected $table = 'bucket_file';
-    protected $fillable = ['title'];
+    protected $table = 'file';
+    protected $fillable = ['source_name', 'sha256', 'size', 'slug'];
 
     public function getCreatedAtAttribute($value)
     {
@@ -21,7 +21,7 @@ class BucketFile extends Model
         return Carbon::parse($value)->format('d.m.Y H:i:s');
     }
 
-    public function files() {
-        return $this->belongsToMany(File::class, 'file_m2m_bucket', 'bucket_id', 'file_id', 'id', 'id');
+    public function bucket() {
+        return $this->belongsToMany(BucketFile::class, 'file_m2m_bucket', 'file_id', 'bucket_id', 'id', 'id');
     }
 }

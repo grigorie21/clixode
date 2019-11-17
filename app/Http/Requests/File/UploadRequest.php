@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\API\File;
+namespace App\Http\Requests\File;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -24,9 +24,8 @@ class UploadRequest extends FormRequest
     public function rules()
     {
         return [
-            'bucket' => 'required|string',
+            'bucket_id' => 'required|string',
             'file' => 'required|file',
-//            'id' => 'id',
         ];
     }
 }

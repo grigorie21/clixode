@@ -20,7 +20,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::group(['as' => 'file.', 'prefix' => 'file'], function() {
     Route::group(['as' => 'add.', 'prefix' => 'add'], function() {
         Route::post('url', 'File\AddController@url')->name('url');
-        Route::post('upload', 'File\AddController@upload')->name('upload');
+//        Route::post('upload', 'File\AddController@upload')->name('upload')->middleware('web');
 //        Route::any('delete', 'File/AddController@delete')->name('delete');
 //        Route::any('update', 'File/AddController@update')->name('update');
     });

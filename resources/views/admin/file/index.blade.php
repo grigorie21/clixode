@@ -1,4 +1,4 @@
-@extends('index')
+@extends('admin.index')
 
 @section('body')
     <table>
@@ -19,7 +19,7 @@
                 <td class="text-center">{{$v->created_at}}</td>
                 <td class="text-center">{{$v->updated_at}}</td>
                 <td class="actions">
-                    <a href="{{route('image.edit', ['model' => $v->id])}}">
+                    <a href="{{route('admin.file.edit', ['model' => $v->id])}}">
                         <i class="icon edit"></i>
                     </a>
                 </td>

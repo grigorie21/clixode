@@ -1,7 +1,6 @@
-@extends('index')
+@extends('admin.index')
 
 @section('body')
-    @dump($errors->any(), $errors->all())
     @if ($errors->any())
         <ul>
             @foreach ($errors->all() as $error)
@@ -11,10 +10,10 @@
     @endif
 
     @if($model->id)
-        <form action="{{route('api.file.add.upload')}}" method="post" enctype="multipart/form-data">
+        <form action="{{route('admin.file.upload')}}" method="post" enctype="multipart/form-data">
             @csrf
 
-            <input type="hidden" name="bucket" value="Hello world"/>
+            <input type="hidden" name="bucket_id" value="{{$model->id}}"/>
 
             <table>
                 <tr>
