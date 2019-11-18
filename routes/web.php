@@ -1,7 +1,9 @@
 <?php
 
-Route::get('file/{slug}', 'DownloadController@file');
-Route::get('image/{slug}', 'DownloadController@image');
+Route::group(['as' => 'download.'], function () {
+    Route::get('file/{slug}', 'DownloadController@file')->name('file');
+    Route::get('image/{slug}', 'DownloadController@image')->name('image');
+});
 
 // Auth
 Route::group(['as' => 'auth.'], function () {
@@ -26,7 +28,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
         Route::get('/', 'FileController@index')->name('index');
         Route::get('create', 'FileController@create')->name('create');
         Route::get('edit/{model}', 'FileController@edit')->name('edit');
+        Route::get('{id}', 'FileController@show')->name('show');
         Route::post('upload', 'FileController@upload')->name('upload');
+        Route::delete('{id}', 'FileController@delete')->name('delete');
     });
 });
 
