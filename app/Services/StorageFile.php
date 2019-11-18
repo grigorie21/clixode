@@ -6,6 +6,7 @@ namespace App\Services;
 use App\Contracts\StorageFile as StorageFileContract;
 use App\Models\BucketFile;
 use App\Models\File;
+use App\Models\FileM2MBucket;
 use Illuminate\Support\Facades\DB;
 
 class StorageFile implements StorageFileContract
@@ -43,14 +44,18 @@ class StorageFile implements StorageFileContract
                     'source_name' => $name,
                     'sha256' => $sha256,
                     'size' => $fileSize,
-                    'slug' => $this->store->slug($path),
                 ]);
             }
 
-            $bucket->files()->save($file, [
-                'name' => $name,
-                'created_at' => date('Y-m-d H:i:s'),
-            ]);
+            do {
+                $saveFileCounter = isset($saveFileCounter) ? ++$saveFileCounter : 0;
+                $saveFileResult = $bucket->files()->save($file, [
+                    'name' => $name,
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'slug' => $this->store->randomSlug(),
+                ]);
+            } while (!$saveFileResult && $saveFileCounter < 100);
+
             DB::commit();
 
             return true;

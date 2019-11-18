@@ -6,6 +6,7 @@ namespace App\Contracts;
 
 interface Store
 {
-    public function slug(string $path): string;
+    public function randomSlug(): string;
+    public function hashPath(string $hash): string;
     public function dstDir(string $hash): string;
 }

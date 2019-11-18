@@ -26,9 +26,39 @@
                 </tr>
             </table>
         </form>
-        EDIT
     @else
         CREATE
     @endif
-    FILE BUCKET
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Created at</th>
+            <th>Link</th>
+            <th>Download</th>
+            <th>Delete</th>
+        </tr>
+        </thead>
+        @foreach($model->files as $v)
+            <tr>
+                <td>{{$v->pivot->id}}</td>
+                <td>{{$v->pivot->name}}</td>
+                <td>{{$v->pivot->created_at->format('d.m.Y H:i:s')}}</td>
+                <td>http:{{route('download.file', ['slug' => $v->pivot->slug])}}</td>
+                <td>
+                    <a href="{{route('download.file', ['slug' => $v->pivot->slug])}}">Download</a>
+                </td>
+                <td>
+                    <form action="{{route('admin.file.delete', ['id' => $v->pivot->id])}}" method="post">
+                        @method('DELETE')
+                        @csrf
+
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        @endforeach
+    </table>
 @endsection

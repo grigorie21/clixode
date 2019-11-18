@@ -9,7 +9,7 @@ class File extends Model
 {
     public $timestamps = true;
     protected $table = 'file';
-    protected $fillable = ['source_name', 'sha256', 'size', 'slug'];
+    protected $fillable = ['source_name', 'sha256', 'size'];
 
     public function getCreatedAtAttribute($value)
     {
@@ -22,6 +22,7 @@ class File extends Model
     }
 
     public function bucket() {
-        return $this->belongsToMany(BucketFile::class, 'file_m2m_bucket', 'file_id', 'bucket_id', 'id', 'id');
+        return $this->belongsToMany(BucketFile::class, 'file_m2m_bucket', 'file_id', 'bucket_id', 'id', 'id')
+            ->withPivot('name', 'slug', 'created_at');
     }
 }
