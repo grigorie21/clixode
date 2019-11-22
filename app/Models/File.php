@@ -9,7 +9,7 @@ class File extends Model
 {
     public $timestamps = true;
     protected $table = 'file';
-    protected $fillable = ['source_name', 'sha256', 'size'];
+    protected $fillable = ['source_name', 'sha256', 'slug', 'size'];
 
     public function getCreatedAtAttribute($value)
     {

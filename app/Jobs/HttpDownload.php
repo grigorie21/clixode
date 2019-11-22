@@ -11,6 +11,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Support\Facades\DB;
 
 class HttpDownload implements ShouldQueue
 {
@@ -24,6 +25,7 @@ class HttpDownload implements ShouldQueue
     public $id;
     public $url;
     public $bucket;
+    public $errors;
 
     /**
      * Create a new job instance.
@@ -35,6 +37,7 @@ class HttpDownload implements ShouldQueue
         $this->time = time();
         $this->url = $url;
         $this->bucket = $bucket;
+        //добавить проверку на наличие файла
     }
 
     /**
@@ -48,60 +51,64 @@ class HttpDownload implements ShouldQueue
      */
     function progress($resource, $download_size, $downloaded_size, $upload_size, $uploaded_size)
     {
-        static $previousProgress = 0;
+        if (isset($this->error)) {
+            static $previousProgress = 0;
 
-        if ($download_size == 0) {
-            $progress = 0;
-        } else {
-            $progress = round($downloaded_size / $download_size * 100, 2, PHP_ROUND_HALF_DOWN);
+            if ($download_size == 0) {
+                $progress = 0;
+            } else {
+                $progress = round($downloaded_size / $download_size * 100, 2, PHP_ROUND_HALF_DOWN);
 
-            if ((time() - $this->time) >= 1) {
-                $this->time = time();
+                if ((time() - $this->time) >= 1) {
+                    $this->time = time();
 
-                if (!$this->firstRecord) {
-                    $task = HttpDownloadTask::create([
-                        'url' => $this->url,
-                        'status_id' => '1',
-                        'progress' => $progress,
-                    ]);
-                    $this->firstRecord = true;
-                    $this->id = $task->id;
-                } else {
-                    if ($this->id) {
-                        HttpDownloadTask::find($this->id)->update([
+                    if (!$this->firstRecord) {
+                        $task = HttpDownloadTask::create([
+                            'url' => $this->url,
+                            'status_id' => '1',
                             'progress' => $progress,
                         ]);
+                        $this->firstRecord = true;
+                        $this->id = $task->id;
+                    } else {
+                        if ($this->id) {
+                            HttpDownloadTask::find($this->id)->update([
+                                'progress' => $progress,
+                            ]);
+                        }
                     }
                 }
             }
-        }
 
-        if ($progress > $previousProgress) {
-            $previousProgress = $progress;
-            $fp = fopen('progress.txt', 'a');
-            fputs($fp, "$progress\n");
-            fclose($fp);
+            if ($progress > $previousProgress) {
+                $previousProgress = $progress;
+                $fp = fopen('progress.txt', 'a');
+                fputs($fp, "$progress\n");
+                fclose($fp);
 
-            if ($progress == 100) {
-                HttpDownloadTask::find($this->id)->update([
-                    'progress' => $progress,
-                ]);
+                if ($progress == 100) {
+                    DB::transaction(function () use ($download_size, $progress) {
 
-                $file = File::create([
-                    'source_name' => 1,
-                    'sha256' => uniqid(),
-                    'size' => $download_size,
-                    'slug' => uniqid(),
-                ]);
-                $bucketId = BucketFile::where('slug', $this->bucket)->first()->id;
-                FileM2mBucket::create([
-                    'file_id' => $file->id,
-                    'bucket_id' => $bucketId,
-                    'name' => 11
-                ]);
+                        HttpDownloadTask::find($this->id)->update(['progress' => $progress]);
+                        $file = File::create([
+                            'source_name' => 1,
+                            'sha256' => uniqid(),
+                            'size' => $download_size,
+                            'slug' => uniqid(),
+                        ]);
+                        $bucketId = BucketFile::where('slug', $this->bucket)->first()->id;
+                        FileM2mBucket::create([
+                            'file_id' => $file->id,
+                            'bucket_id' => $bucketId,
+                            'name' => 11
+                        ]);
+                    }, 5);
+
+                }
             }
         }
     }
+
 
     /**
      * Execute the job.
@@ -110,15 +117,17 @@ class HttpDownload implements ShouldQueue
      */
     public function handle()
     {
-        $targetFile = fopen('testfile.iso', 'w');
+        $targetFile = fopen(basename($this->url), 'w+');
         $ch = curl_init($this->url);
-
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_NOPROGRESS, false);
-        curl_setopt($ch, CURLOPT_PROGRESSFUNCTION, [$this, 'progress']);
+        curl_setopt($ch, CURLOPT_PROGRESSFUNCTION, [$this, 'progress']); //посмотреть
         curl_setopt($ch, CURLOPT_FILE, $targetFile);
         curl_exec($ch);
-
+        if (curl_errno($ch)) {
+            $this->error = true;
+        }
+        curl_close($ch);
         fclose($targetFile);
     }
 }
