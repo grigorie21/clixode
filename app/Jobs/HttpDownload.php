@@ -51,7 +51,7 @@ class HttpDownload implements ShouldQueue
      */
     function progress($resource, $download_size, $downloaded_size, $upload_size, $uploaded_size)
     {
-        if (isset($this->error)) {
+//        if (isset($this->error)) {
 //        if ($this->error) {
 //        if ($this->error == 33 ) {
             static $previousProgress = 0;
@@ -108,9 +108,9 @@ class HttpDownload implements ShouldQueue
 
                 }
             }
-        } else {
-//            dd($this->error);
-        }
+//        } else {
+////            dd($this->error);
+//        }
     }
 
 
@@ -130,11 +130,10 @@ class HttpDownload implements ShouldQueue
         curl_setopt($ch, CURLOPT_FILE, $targetFile);
         curl_setopt($ch, CURLOPT_FAILONERROR, true);
 
-
         curl_exec($ch);
 
         if (curl_errno($ch)) {
-//            dd(1);
+            dd(1);
             $this->error = curl_errno($ch);
             unlink(basename($this->url));
 
