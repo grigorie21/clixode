@@ -34,10 +34,10 @@ class HttpDownload implements ShouldQueue
      */
     public function __construct($url, $bucket)
     {
+
         $this->time = time();
         $this->url = $url;
         $this->bucket = $bucket;
-        //добавить проверку на наличие файла
     }
 
     /**
@@ -52,6 +52,8 @@ class HttpDownload implements ShouldQueue
     function progress($resource, $download_size, $downloaded_size, $upload_size, $uploaded_size)
     {
         if (isset($this->error)) {
+//        if ($this->error) {
+//        if ($this->error == 33 ) {
             static $previousProgress = 0;
 
             if ($download_size == 0) {
@@ -106,6 +108,8 @@ class HttpDownload implements ShouldQueue
 
                 }
             }
+        } else {
+//            dd($this->error);
         }
     }
 
@@ -117,17 +121,32 @@ class HttpDownload implements ShouldQueue
      */
     public function handle()
     {
+
         $targetFile = fopen(basename($this->url), 'w+');
         $ch = curl_init($this->url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_NOPROGRESS, false);
         curl_setopt($ch, CURLOPT_PROGRESSFUNCTION, [$this, 'progress']); //посмотреть
         curl_setopt($ch, CURLOPT_FILE, $targetFile);
+        curl_setopt($ch, CURLOPT_FAILONERROR, true);
+
+
         curl_exec($ch);
+
         if (curl_errno($ch)) {
-            $this->error = true;
+//            dd(1);
+            $this->error = curl_errno($ch);
+            unlink(basename($this->url));
+
+//            info(555);
+//            $fp = fopen('wwww.txt', 'w+');
+//            fputs($fp, "progress\n");
+//            fclose($fp);
         }
+
         curl_close($ch);
+
         fclose($targetFile);
+
     }
 }
