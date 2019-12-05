@@ -51,7 +51,9 @@ class HttpDownload implements ShouldQueue
      */
     function progress($resource, $download_size, $downloaded_size, $upload_size, $uploaded_size)
     {
-//        if (isset($this->error)) {
+        if (!isset($this->error)) {
+//            info(1);
+//            dd(1);
 //        if ($this->error) {
 //        if ($this->error == 33 ) {
             static $previousProgress = 0;
@@ -61,18 +63,20 @@ class HttpDownload implements ShouldQueue
             } else {
                 $progress = round($downloaded_size / $download_size * 100, 2, PHP_ROUND_HALF_DOWN);
 
+                if (!$this->firstRecord) {
+                    $task = HttpDownloadTask::create([
+                        'url' => $this->url,
+                        'status_id' => '1',
+                        'progress' => $progress,
+                    ]);
+                    $this->firstRecord = true;
+                    $this->id = $task->id;
+                }
+
                 if ((time() - $this->time) >= 1) {
                     $this->time = time();
 
-                    if (!$this->firstRecord) {
-                        $task = HttpDownloadTask::create([
-                            'url' => $this->url,
-                            'status_id' => '1',
-                            'progress' => $progress,
-                        ]);
-                        $this->firstRecord = true;
-                        $this->id = $task->id;
-                    } else {
+                    if ($this->firstRecord) {
                         if ($this->id) {
                             HttpDownloadTask::find($this->id)->update([
                                 'progress' => $progress,
@@ -105,12 +109,11 @@ class HttpDownload implements ShouldQueue
                             'name' => 11
                         ]);
                     }, 5);
-
                 }
             }
 //        } else {
 ////            dd($this->error);
-//        }
+        }
     }
 
 
@@ -121,31 +124,38 @@ class HttpDownload implements ShouldQueue
      */
     public function handle()
     {
+//        try {
+            $targetFile = fopen(basename($this->url) . '1', 'w+');
+            $ch = curl_init($this->url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_NOPROGRESS, false);
+            curl_setopt($ch, CURLOPT_PROGRESSFUNCTION, [$this, 'progress']); //посмотреть
+            curl_setopt($ch, CURLOPT_FILE, $targetFile);
+            curl_setopt($ch, CURLOPT_FAILONERROR, true);
 
-        $targetFile = fopen(basename($this->url), 'w+');
-        $ch = curl_init($this->url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_NOPROGRESS, false);
-        curl_setopt($ch, CURLOPT_PROGRESSFUNCTION, [$this, 'progress']); //посмотреть
-        curl_setopt($ch, CURLOPT_FILE, $targetFile);
-        curl_setopt($ch, CURLOPT_FAILONERROR, true);
+            curl_exec($ch);
 
-        curl_exec($ch);
+            if (curl_errno($ch)) {
+                $this->error = curl_errno($ch);
+                unlink(basename($this->url) . '1');
+                unlink('wwwww.txt');
+                dd(12);
 
-        if (curl_errno($ch)) {
-            dd(1);
-            $this->error = curl_errno($ch);
-            unlink(basename($this->url));
 
-//            info(555);
+                info(555);
 //            $fp = fopen('wwww.txt', 'w+');
 //            fputs($fp, "progress\n");
 //            fclose($fp);
-        }
+            }
 
-        curl_close($ch);
+            curl_close($ch);
 
-        fclose($targetFile);
-
+            fclose($targetFile);
+//        } catch (\Exception $e){
+//            unlink(basename($this->url) . '1');
+//            unlink('wwwww.txt');
+//
+//            info(555);
+//        }
     }
 }
