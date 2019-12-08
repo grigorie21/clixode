@@ -28,8 +28,16 @@ class AddController extends Controller
      * @param Request $request
      * @param int $id file/task ID
      */
-    public function status(Request $request, int $id)
+    public function status(int $id)
     {
 
+
+//в ответе на запрос загрузку/добавления файла — мы возвращаем ID задачи
+//
+//
+//по этому ID тот кто отправил запрос — сможет отслеживать текущее состояние задачи (загрузки файла)
+//
+//
+//текущее состояние — пишется в БД, в таблицу http_download_task, эту таблицу соотв. нужно будет ещё создать
     }
 }
