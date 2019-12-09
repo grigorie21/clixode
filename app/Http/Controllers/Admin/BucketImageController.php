@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 //use Intervention\Image\Facades\Image;
 
-class ImageController extends Controller
+class BucketImageController extends Controller
 {
     public function index(Request $request)
     {
@@ -39,7 +39,10 @@ class ImageController extends Controller
 
     public function upload(Request $request, BucketImage $model)
     {
-        dd(991);
-        dd(108, $request->all(), $model);
+        foreach ($request->images as $image) {
+//            dump($image->getRealPath());
+        }
+
+
     }
 }

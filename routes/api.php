@@ -17,6 +17,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::group(['as' => 'bucket-image.', 'prefix' => 'bucket-image'], function() {
+    Route::get('/', 'BucketImageController@index')->name('index');
+    Route::get('{model}', 'BucketImageController@show')->name('show');
+});
+
 Route::group(['as' => 'file.', 'prefix' => 'file'], function() {
     Route::group(['as' => 'add.', 'prefix' => 'add'], function() {
         Route::post('url', 'File\AddController@url')->name('url');

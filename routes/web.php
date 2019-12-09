@@ -16,15 +16,21 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     // Index page
     Route::get('/', 'IndexController@index')->name('index');
 
-    // Image
-    Route::group(['prefix' => 'image', 'as' => 'image.'], function () {
-        Route::get('/', 'ImageController@index')->name('index');
-        Route::get('create', 'ImageController@create')->name('create');
-        Route::get('edit/{model}', 'ImageController@edit')->name('edit');
+    // Bucket image
+    Route::group(['prefix' => 'bucket-image', 'as' => 'bucket-image.'], function () {
+        Route::get('/', 'BucketImageController@index')->name('index');
+        Route::get('create', 'BucketImageController@create')->name('create');
+        Route::get('edit/{model}', 'BucketImageController@edit')->name('edit');
+        Route::get('edit/{model}/images', 'BucketImageController@edit')->name('images');
+        Route::post('edit/{model}/upload', 'BucketImageController@upload')->name('upload');
     });
 
-    // File
-    Route::group(['prefix' => 'file', 'as' => 'file.'], function () {
+    Route::group(['prefix' => 'image', 'as' => 'image.'], function () {
+        Route::get('/', 'ImageController@index')->name('index');
+    });
+
+    // Bucket file
+    Route::group(['prefix' => 'bucket-file', 'as' => 'bucket-file.'], function () {
         Route::get('/', 'FileController@index')->name('index');
         Route::get('create', 'FileController@create')->name('create');
         Route::get('edit/{model}', 'FileController@edit')->name('edit');
