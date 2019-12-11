@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Models\BucketFile;
 use App\Models\File;
 use App\Models\FileM2mBucket;
 use App\Models\HttpDownloadTask;
@@ -22,7 +21,7 @@ class HttpDownload implements ShouldQueue
 
     public $time;
     public $firstRecord;
-    public $id;
+    public $taskId;
     public $url;
     public $bucket;
     public $errors;
@@ -64,43 +63,20 @@ class HttpDownload implements ShouldQueue
                     'progress' => $progress,
                 ]);
                 $this->firstRecord = true;
-                $this->id = $task->id;
+                $this->taskId = $task->id;
             }
 
             if ((time() - $this->time) >= 1) {
                 $this->time = time();
 
-                if ($this->firstRecord) {
-                    if ($this->id) {
-                        $task = HttpDownloadTask::find($this->id)->update([
+                if ($this->firstRecord && $progress > $previousProgress) {
+                    $previousProgress = $progress;
+                    if ($this->taskId) {
+                        HttpDownloadTask::find($this->taskId)->update([
                             'progress' => $progress,
                         ]);
                     }
                 }
-            }
-        }
-
-        if ($progress > $previousProgress) {
-            $previousProgress = $progress;
-
-            if ($progress == 100) {
-                DB::transaction(function () use ($download_size, $progress) {
-
-                    HttpDownloadTask::find($this->id)->update(['progress' => $progress]);
-
-                    $file = File::create([
-                        'source_name' => 1,
-                        'sha256' => uniqid(),
-                        'size' => $download_size,
-                        'slug' => uniqid(),
-                    ]);
-
-                    FileM2mBucket::create([
-                        'file_id' => $file->id,
-                        'bucket_id' => $this->bucket,
-                        'name' => 7,
-                    ]);
-                });
             }
         }
     }
@@ -113,12 +89,12 @@ class HttpDownload implements ShouldQueue
     public function handle()
     {
         $oldFilename = 'file';
-        $targetFile = fopen( $oldFilename, 'w+');
+        $targetFile = fopen($oldFilename, 'w+');
         $ch = curl_init();
 
         curl_setopt($ch, CURLOPT_URL, $this->url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HEADER, 1);
+        curl_setopt($ch, CURLOPT_HEADER, true);
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_NOPROGRESS, false);
@@ -126,25 +102,40 @@ class HttpDownload implements ShouldQueue
         curl_setopt($ch, CURLOPT_FILE, $targetFile);
         curl_setopt($ch, CURLOPT_FAILONERROR, true);
 
-        $response = curl_exec($ch);
-
-        // Retudn headers seperatly from the Response Body
-        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-        $headers = substr($response, 0, $header_size);
-        $body = substr($response, $header_size);
-
         if (($response = curl_exec($ch)) !== false) {
             if (curl_getinfo($ch, CURLINFO_HTTP_CODE) == '200') {
-
                 $filename = null;
                 $reDispo = '/^Content-Disposition: .*?filename=(?<f>[^\s]+|\x22[^\x22]+\x22)\x3B?.*$/m';
+
                 if (preg_match($reDispo, $response, $mDispo)) {
                     $filename = trim($mDispo['f'], ' ";');
                 }
+
                 if (!$filename) {
                     $filename = basename($this->url);
                 }
-                rename($oldFilename, "file_{$this->id}");
+
+                if (rename($oldFilename, "file_{$this->taskId}")) {
+                    $hash = hash_file("sha512", "file_{$this->taskId}");
+                    DB::transaction(function () use ($filename, $hash) {
+
+                        HttpDownloadTask::find($this->taskId)->update([
+                            'progress' => 100,
+                            'status_id' => 10
+                        ]);
+                        $file = File::create([
+                            'name' => $filename,
+                            'sha512' => $hash,
+                            'size' => filesize("file_{$this->taskId}"),
+                            'slug' => uniqid(),
+                        ]);
+                        FileM2mBucket::create([
+                            'file_id' => $file->id,
+                            'bucket_id' => $this->bucket,
+                            'name' => $file->slug,
+                        ]);
+                    });
+                }
             }
         }
     }
