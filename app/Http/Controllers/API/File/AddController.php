@@ -5,9 +5,11 @@ namespace App\Http\Controllers\API\File;
 use App\Http\Requests\API\File\AddRequest;
 use App\Jobs\HttpDownload;
 use App\Http\Requests\API\File\Add\UrlRequest;
+use App\Models\HttpDownloadTask;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use phpDocumentor\Reflection\Types\Integer;
 
 class AddController extends Controller
 {
@@ -23,21 +25,17 @@ class AddController extends Controller
     }
 
     /**
-     * Return status of current file/task
+     * Return progress of current file/task
      *
-     * @param Request $request
-     * @param int $id file/task ID
+     * @param int $id
+     * @return float|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
     public function status(int $id)
     {
-
-
-//в ответе на запрос загрузку/добавления файла — мы возвращаем ID задачи
-//
-//
-//по этому ID тот кто отправил запрос — сможет отслеживать текущее состояние задачи (загрузки файла)
-//
-//
-//текущее состояние — пишется в БД, в таблицу http_download_task, эту таблицу соотв. нужно будет ещё создать
+        if(HttpDownloadTask::find($id)) {
+            $progress = (float) HttpDownloadTask::find($id)->progress;
+            return $progress;
+        }
+        return response(null,404);
     }
 }

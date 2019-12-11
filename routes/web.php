@@ -38,5 +38,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
 Route::group(['prefix' => 'api', 'as' => 'api.', 'namespace' => 'API'], function () {
     Route::group(['prefix' => 'file', 'as' => 'file.', 'namespace' => 'File'], function () {
         Route::post('download', 'AddController@url')->name('download');
+        Route::get('status/{id}', 'AddController@status')->name('status');
     });
 });
