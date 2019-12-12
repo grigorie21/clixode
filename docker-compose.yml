@@ -1,0 +1,60 @@
+version: "3"
+
+networks:
+  clixode:
+
+volumes:
+  var_run:
+#    driver: local
+
+services:
+  php:
+    build:
+      context: ./docker
+      dockerfile: php.docker
+
+    volumes:
+      - ./storage/logs:/logs
+      - .:/var/www
+      - var_run:/var/run
+
+  nginx:
+    build:
+      context: ./docker
+      dockerfile: nginx.docker
+
+    networks:
+      - clixode
+
+    volumes:
+      - var_run:/var/run
+      - .:/var/www
+      - ./docker/log:/log
+
+    ports:
+      - 80:80
+      - 443:443
+
+  mysql:
+    build:
+      context: ./docker
+      dockerfile: mysql.docker
+
+    networks:
+      - clixode
+
+    volumes:
+      - var_run:/var/run
+      - ./storage/mysql:/var/lib/mysql
+
+    ports:
+      - 3306:3306
+
+    restart: always
+
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: clixode
+
+    command:
+      'mysqld --innodb-flush-method=fsync'
