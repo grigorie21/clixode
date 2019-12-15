@@ -2,32 +2,44 @@
 
 namespace App\Http\Controllers\API\File;
 
+use App\Http\Requests\API\File\AddRequest;
+use App\Jobs\HttpDownload;
 use App\Http\Requests\API\File\Add\UrlRequest;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use App\Models\HttpDownloadTask;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Response;
 
 class AddController extends Controller
 {
     /**
      * Add file to bucket by url
      *
-     * @param Request $request
-     * @return JsonResponse
+     * @param UrlRequest $request
      */
     public function url(UrlRequest $request)
     {
-        // Add download file task
+        HttpDownload::dispatch($request->url, $request->bucket);
     }
 
     /**
-     * Return status of current file/task
+     * Return progress of current file/task
      *
-     * @param Request $request
-     * @param int $id file/task ID
+     * @param int $id
+     * @return float|ResponseFactory|Response
      */
-    public function status(Request $request, int $id)
+    public function status(int $id)
     {
+        if(HttpDownloadTask::find($id)) {
+            $model = HttpDownloadTask::find($id);
 
+            return response()->json([
+                'task_id' => $model->id,
+                'progress' => $model->progress,
+                'status' => $model->status_id,
+            ]);
+        }
+
+        return response(null,404);
     }
 }

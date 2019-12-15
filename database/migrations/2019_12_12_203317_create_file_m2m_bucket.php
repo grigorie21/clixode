@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateFileTable extends Migration
+class CreateFileM2mBucket extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,11 @@ class CreateFileTable extends Migration
      */
     public function up()
     {
-        Schema::create('file', function (Blueprint $table) {
+        Schema::create('file_m2m_bucket', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name', 255)->nullable()->default(null);
-            $table->string('sha512', 128);
-            $table->integer('size', 11);
-            $table->string('size', 60);
+            $table->integer('file_id', 11);
+            $table->integer('bucket_id', 11);
+            $table->string('name', 255);
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ class CreateFileTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('file');
+        Schema::dropIfExists('file_m2m_bucket');
     }
 }
