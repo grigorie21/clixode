@@ -5,11 +5,11 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class File extends Model
+class  File extends Model
 {
     public $timestamps = true;
     protected $table = 'file';
-    protected $fillable = ['source_name', 'sha256', 'size'];
+    protected $fillable = ['name', 'sha512', 'slug', 'size'];
 
     public function getCreatedAtAttribute($value)
     {
