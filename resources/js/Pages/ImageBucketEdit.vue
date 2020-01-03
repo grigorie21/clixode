@@ -27,8 +27,13 @@
                         <b-button type="submit" variant="success">Save/Update</b-button>
                     </b-form>
                 </b-tab>
+
                 <b-tab title="Images">
                     <b-card-text>{{model.images}}</b-card-text>
+                </b-tab>
+
+                <b-tab title="Filters">
+                    <b-card-text>Bucket filters</b-card-text>
                 </b-tab>
             </b-tabs>
         </b-card>
