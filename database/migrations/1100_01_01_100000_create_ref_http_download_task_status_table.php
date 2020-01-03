@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateFileM2mBucket extends Migration
+class CreateRefHttpDownloadTaskStatusTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,9 @@ class CreateFileM2mBucket extends Migration
      */
     public function up()
     {
-        Schema::create('file_m2m_bucket', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->integer('file_id', 11);
-            $table->integer('bucket_id', 11);
-            $table->string('name', 255);
-            $table->timestamps();
+        Schema::create('ref_http_download_task_status', function (Blueprint $table) {
+            $table->integer('id')->unsigned()->unique();
+            $table->string('title');
         });
     }
 
@@ -29,6 +26,6 @@ class CreateFileM2mBucket extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('file_m2m_bucket');
+        Schema::dropIfExists('ref_http_download_task_status');
     }
 }

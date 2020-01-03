@@ -1,5 +1,5 @@
 <?php
-
+//Download image
 Route::group(['as' => 'download.'], function () {
     Route::get('file/{slug}', 'DownloadController@file')->name('file');
     Route::get('image/{slug}', 'DownloadController@image')->name('image');
@@ -40,10 +40,5 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     });
 });
 
-// Api
-Route::group(['prefix' => 'api', 'as' => 'api.', 'namespace' => 'API'], function () {
-    Route::group(['prefix' => 'file', 'as' => 'file.', 'namespace' => 'File'], function () {
-        Route::post('download', 'AddController@url')->name('download');
-        Route::get('status/{id}', 'AddController@status')->name('status');
-    });
-});
+
+

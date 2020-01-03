@@ -11,8 +11,9 @@ class HttpDownloadTask extends Model
     protected $table = 'http_download_task';
     protected $fillable = [
         'url',
-        'status_id',
+        'ref_http_download_task_status_id',
         'progress',
+        'bucket_id',
     ];
 
 }

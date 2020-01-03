@@ -20,24 +20,28 @@ class HttpDownload implements ShouldQueue
     use SerializesModels;
 
     public $time;
-    public $firstRecord;
     public $taskId;
     public $url;
     public $bucket;
     public $errors;
 
     /**
-     * Create a new job instance.
+     * Create a new job instance
      *
      * HttpDownload constructor.
-     * @param $url
-     * @param $bucket
+     * @param $taskId
+     * @param $bucketId
      */
-    public function __construct($url, $bucket)
+    public function __construct($taskId)
     {
         $this->time = time();
-        $this->url = $url;
-        $this->bucket = $bucket;
+
+        $this->taskId = $taskId;
+
+        $task = HttpDownloadTask::find($taskId);
+
+        $this->url = $task->url;
+        $this->bucket = $task->bucket_id;
     }
 
     /**
@@ -58,21 +62,13 @@ class HttpDownload implements ShouldQueue
         } else {
             $progress = round($downloaded_size / $download_size * 100, 2, PHP_ROUND_HALF_DOWN);
 
-            if (!$this->firstRecord) {
-                $task = HttpDownloadTask::create([
-                    'url' => $this->url,
-                    'status_id' => '1',
-                    'progress' => $progress,
-                ]);
-                $this->firstRecord = true;
-                $this->taskId = $task->id;
-            }
-
             if ((time() - $this->time) >= 1) {
                 $this->time = time();
 
-                if ($this->firstRecord && $progress > $previousProgress) {
+                if (
+                    $progress > $previousProgress) {
                     $previousProgress = $progress;
+
                     if ($this->taskId) {
                         HttpDownloadTask::find($this->taskId)->update(['progress' => $progress]);
                     }
@@ -86,8 +82,8 @@ class HttpDownload implements ShouldQueue
      */
     public function handle()
     {
-        $oldFilename = 'file';
-        $targetFile = fopen($oldFilename, 'w+');
+        $fileName = "file_{$this->taskId}";
+        $targetFile = fopen($fileName, 'w+');
         $ch = curl_init();
 
         curl_setopt($ch, CURLOPT_URL, $this->url);
@@ -102,41 +98,38 @@ class HttpDownload implements ShouldQueue
 
         if (($response = curl_exec($ch)) !== false) {
             if (curl_getinfo($ch, CURLINFO_HTTP_CODE) == 200) {
-                $filename = null;
+                $sourceFileName = null;
                 $headerFilename = '/^Content-Disposition: .*?filename=(?<f>[^\s]+|\x22[^\x22]+\x22)\x3B?.*$/m';
 
                 if (preg_match($headerFilename, $response, $matches)) {
-                    $filename = trim($matches['f'], ' ";');
+                    $sourceFileName = trim($matches['f'], ' ";');
                 }
 
-                if (!$filename) {
-                    $filename = basename($this->url);
+                if (!$sourceFileName) {
+                    $sourceFileName = basename($this->url);
                 }
 
-                $newFileName = "file_{$this->taskId}";
-                if (rename($oldFilename, $newFileName)) {
-                    $hash = hash_file("sha512", $newFileName);
-                    DB::transaction(function () use ($filename, $hash, $newFileName) {
+                $hash = hash_file('sha512', $fileName);
 
-                        HttpDownloadTask::find($this->taskId)->update([
-                            'progress' => 100,
-                            'status_id' => 10
-                        ]);
+                DB::transaction(function () use ($sourceFileName, $hash, $fileName) {
+                    HttpDownloadTask::find($this->taskId)->update([
+                        'progress' => 100,
+                        'ref_http_download_task_status_id' => 10,
+                    ]);
 
-                        $file = File::create([
-                            'name' => $filename,
-                            'sha512' => $hash,
-                            'size' => filesize($newFileName),
-                            'slug' => uniqid(),
-                        ]);
+                    $file = File::create([
+                        'name' => $sourceFileName,
+                        'sha512' => $hash,
+                        'size' => filesize($fileName),
+                        'slug' => uniqid(),
+                    ]);
 
-                        FileM2mBucket::create([
-                            'file_id' => $file->id,
-                            'bucket_id' => $this->bucket,
-                            'name' => $file->slug,
-                        ]);
-                    });
-                }
+                    FileM2mBucket::create([
+                        'file_id' => $file->id,
+                        'bucket_id' => $this->bucket,
+                        'name' => $file->slug,
+                    ]);
+                });
             }
         }
     }

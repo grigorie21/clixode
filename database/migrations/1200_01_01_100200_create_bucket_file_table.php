@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateFileTable extends Migration
+class CreateBucketFileTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,14 @@ class CreateFileTable extends Migration
      */
     public function up()
     {
-        Schema::create('file', function (Blueprint $table) {
+        Schema::create('bucket_file', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name', 255)->nullable()->default(null);
-            $table->string('sha512', 128);
-            $table->integer('size', 11);
-            $table->string('size', 60);
+            $table->char('title', 255);
+            $table->bigInteger('user_id')->unsigned();
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('user')
+                ->onUpdate('CASCADE')->onDelete('CASCADE');
         });
     }
 
@@ -30,6 +31,6 @@ class CreateFileTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('file');
+        Schema::dropIfExists('bucket_file');
     }
 }

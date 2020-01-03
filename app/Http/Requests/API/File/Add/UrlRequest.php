@@ -24,7 +24,7 @@ class UrlRequest extends JsonRequest
     public function rules()
     {
         return [
-            'bucket' => 'required|int|exists:bucket_file,id',
+            'bucket_id' => 'required|int|exists:bucket_file,id',
             'url' => 'required|url',
         ];
     }
