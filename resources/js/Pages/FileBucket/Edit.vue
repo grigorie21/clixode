@@ -1,6 +1,6 @@
 <template>
     <div>
-        Image buckets edit
+        File buckets edit
 
         {{$route.params.id}}
 
@@ -28,20 +28,27 @@
                     </b-form>
                 </b-tab>
 
-                <b-tab title="Images">
-                    <b-card-text>{{model.images}}</b-card-text>
+                <b-tab title="Files">
+                    <b-card-text>
+
+
+<!--                        {{model.files}}-->
+                        <file :bucket_id="this.$route.params.id"/>
+                    </b-card-text>
                 </b-tab>
 
-                <b-tab title="Filters">
-                    <b-card-text>Bucket filters</b-card-text>
-                </b-tab>
+<!--                <b-tab title="Filters">-->
+<!--                    <b-card-text>Bucket filters</b-card-text>-->
+<!--                </b-tab>-->
+
             </b-tabs>
         </b-card>
     </div>
 </template>
 
 <script>
-    import routes from "../routes";
+    import routes from "../../routes";
+    import file from "../File/Index.vue";
 
     export default {
         // name: "ImageBucketEdit",
@@ -60,7 +67,7 @@
             }
         },
         async mounted() {
-            let response = await fetch('/api/bucket-image/'+ this.$route.params.id);
+            let response = await fetch('/api/bucket-file/'+ this.$route.params.id);
 
             if (response.ok) {
                 let json = await response.json();
@@ -81,7 +88,3 @@
         }
     }
 </script>
-
-<style scoped>
-
-</style>

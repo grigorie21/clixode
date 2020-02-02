@@ -20,6 +20,12 @@
                 <b-link :to="{name: 'image-buckets'}">Image buckets</b-link>
             </li>
             <li>
+                <b-link :to="{name: 'file-buckets'}">File buckets</b-link>
+            </li>
+            <li>
+                <b-link :to="{name: 'file'}">Files</b-link>
+            </li>
+            <li>
                 <a href="#">User</a>
             </li>
         </ul>

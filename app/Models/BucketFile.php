@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class BucketFile extends Model
@@ -19,6 +20,11 @@ class BucketFile extends Model
     public function getUpdatedAtAttribute($value)
     {
         return Carbon::parse($value)->format('d.m.Y H:i:s');
+    }
+
+    public function scopeSort(Builder $query)
+    {
+        $query->orderBy('id', 'desc');
     }
 
     public function files() {

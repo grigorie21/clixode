@@ -1,6 +1,6 @@
 <template>
     <div>
-        Image buckets edit
+        File edit
 
         {{$route.params.id}}
 
@@ -13,7 +13,7 @@
                         </b-form-group>
 
                         <b-form-group label="Title">
-                            <b-form-input v-model="model.title" placeholder="Enter bucket title"></b-form-input>
+                            <b-form-input v-model="model.name" placeholder="Enter bucket title"></b-form-input>
                         </b-form-group>
 
                         <b-form-group label="Created">
@@ -28,20 +28,20 @@
                     </b-form>
                 </b-tab>
 
-                <b-tab title="Images">
-                    <b-card-text>{{model.images}}</b-card-text>
-                </b-tab>
+<!--                <b-tab title="Files">-->
+<!--                    <b-card-text>{{model.files}}</b-card-text>-->
+<!--                </b-tab>-->
 
-                <b-tab title="Filters">
-                    <b-card-text>Bucket filters</b-card-text>
-                </b-tab>
+<!--                <b-tab title="Filters">-->
+<!--                    <b-card-text>Bucket filters</b-card-text>-->
+<!--                </b-tab>-->
             </b-tabs>
         </b-card>
     </div>
 </template>
 
 <script>
-    import routes from "../routes";
+    import routes from "../../routes";
 
     export default {
         // name: "ImageBucketEdit",
@@ -51,7 +51,10 @@
                 model: {},
                 fields: [
                     {key: 'id', label: 'ID'},
-                    {key: 'title', label: 'Title'},
+                    {key: 'name', label: 'Name'},
+                    {key: 'sha512', label: 'Sha512'},
+                    {key: 'slug', label: 'Slug'},
+                    {key: 'size', label: 'size'},
                     {key: 'created_at', label: 'Created'},
                     {key: 'updated_at', label: 'Updated'},
                     {key: 'actions', label: 'Actions'},
@@ -60,7 +63,7 @@
             }
         },
         async mounted() {
-            let response = await fetch('/api/bucket-image/'+ this.$route.params.id);
+            let response = await fetch('/api/file/'+ this.$route.params.id);
 
             if (response.ok) {
                 let json = await response.json();
@@ -81,7 +84,3 @@
         }
     }
 </script>
-
-<style scoped>
-
-</style>

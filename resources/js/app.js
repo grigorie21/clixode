@@ -6,7 +6,9 @@ import BootstrapVue from 'bootstrap-vue'
 Vue.use(VueRouter);
 Vue.use(BootstrapVue);
 
-Vue.component('index', require('./components/Index').default);
+Vue.component('index', require('./Components/Index').default);
+
+Vue.component('file', require('./Pages/File/Index').default);
 
 import routes from "./routes";
 

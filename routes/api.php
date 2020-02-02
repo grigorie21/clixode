@@ -22,6 +22,12 @@ Route::group(['as' => 'bucket-image.', 'prefix' => 'bucket-image'], function() {
     Route::get('{model}', 'BucketImageController@show')->name('show');
 });
 
+Route::group(['as' => 'bucket-file.', 'prefix' => 'bucket-file', 'namespace' => 'File'], function() {
+    Route::get('/', 'BucketFileController@index')->name('index');
+    Route::get('{model}', 'BucketFileController@show')->name('show');
+});
+
+
 Route::group(['as' => 'file.', 'prefix' => 'file', 'namespace' => 'File'], function() {
     Route::group(['as' => 'add.', 'prefix' => 'add'], function() {
         Route::post('url', 'AddController@url')->name('url');
@@ -30,6 +36,8 @@ Route::group(['as' => 'file.', 'prefix' => 'file', 'namespace' => 'File'], funct
 //        Route::any('delete', 'File/AddController@delete')->name('delete');
 //        Route::any('update', 'File/AddController@update')->name('update');
     });
+    Route::get('/', 'FileController@index')->name('index');
+    Route::get('{model}', 'FileController@show')->name('show');
 
 //    Route::any('status', 'FileController@status')->name('status');
 });
